@@ -23,7 +23,7 @@ async def ask_ollama(prompt: str, model: str | None = None) -> str:
         model=_model,
         prompt=prompt,
     )
-    text: str = response["response"].strip()
+    text: str = response.response.strip()
     log.debug(f"[ollama] ← {text[:120]}")
     return text
 
@@ -38,5 +38,5 @@ async def chat_ollama(messages: list[dict[str, str]], model: str | None = None) 
         model=_model,
         messages=messages,
     )
-    text: str = response["message"]["content"].strip()
+    text: str = response.message.content.strip()
     return text

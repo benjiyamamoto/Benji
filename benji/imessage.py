@@ -187,9 +187,8 @@ async def _poll_loop() -> None:
         try:
             messages = _fetch_new_messages(watermark)
             for msg in messages:
-                watermark = max(watermark, msg["rowid"])
                 await _route_message(msg["text"], msg["handle"])
-            if messages:
+                watermark = msg["rowid"]
                 _save_watermark(watermark)
         except Exception as exc:
             log.error(f"[imessage] poll error: {exc}")

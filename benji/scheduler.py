@@ -1,16 +1,12 @@
 """
-Benji scheduler — APScheduler wrapper.
+Benji scheduler — APScheduler 3.x wrapper.
 
 Scheduled tasks live as plain .py files in ~/.benji/tasks/.
-Each file must expose a run() coroutine (or plain function).
+Each file must expose a run() function (async or sync).
 Benji discovers them at startup and registers them automatically.
 
-Each task file declares its own schedule via a top-level docstring
-block like this:
+Each task file declares its own schedule via a comment in the first 20 lines:
 
-    # benji:schedule interval minutes=15
-
-Supported trigger formats:
     # benji:schedule interval minutes=15
     # benji:schedule interval hours=1
     # benji:schedule cron hour=8 minute=0          (daily at 08:00)
@@ -39,7 +35,7 @@ _KV_RE       = re.compile(r"(\w+)=(\S+)")
 
 def _parse_schedule(source: str) -> dict[str, Any] | None:
     """Return {'trigger': 'interval'|'cron', **kwargs} or None."""
-    for line in source.splitlines()[:20]:          # only scan the top of file
+    for line in source.splitlines()[:20]:
         m = _SCHEDULE_RE.match(line.strip())
         if m:
             trigger = m.group(1)
@@ -64,13 +60,14 @@ def _load_task(path: Path) -> Any:
         raise ImportError(f"Cannot load {path}")
     module = importlib.util.module_from_spec(spec)
     sys.modules[path.stem] = module
-    spec.loader.exec_module(module)          # type: ignore[union-attr]
+    spec.loader.exec_module(module)  # type: ignore[union-attr]
     return module
 
 
 # ── Scheduler bootstrap ────────────────────────────────────────────────────────
 
 async def start_scheduler() -> AsyncIOScheduler:
+    """Create, populate, and start the scheduler. Returns the running instance."""
     scheduler = AsyncIOScheduler()
 
     # ── Built-in: health check ─────────────────────────────────────────────────
@@ -96,7 +93,7 @@ async def start_scheduler() -> AsyncIOScheduler:
                 log.warning(f"  ⚠ {task_file.name}: no '# benji:schedule' header, skipping")
                 continue
 
-            module  = _load_task(task_file)
+            module       = _load_task(task_file)
             trigger_type = schedule.pop("trigger")
             trigger = (
                 IntervalTrigger(**schedule)

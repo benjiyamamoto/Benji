@@ -23,7 +23,7 @@ for _dir in (TASKS_DIR, LOGS_DIR, PROJECTS_DIR):
 # ── Ollama ─────────────────────────────────────────────────────────────────────
 
 OLLAMA_HOST  = "http://localhost:11434"
-OLLAMA_MODEL = "gemma3"   # swap to gemma3:27b or whatever tag you pull
+OLLAMA_MODEL = "gemma4:e4b"  # ~8B param variant, fits comfortably in 16 GB RAM
 
 
 # ── iMessage ───────────────────────────────────────────────────────────────────
