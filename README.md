@@ -55,7 +55,7 @@ uv sync
 
 ```bash
 brew install ollama
-ollama pull gemma3        # or gemma3:27b for the larger model
+ollama pull gemma4:e4b    # ~8B param, fits in 16 GB RAM
 ollama serve              # runs on localhost:11434
 ```
 
@@ -85,7 +85,7 @@ export CLAUDE_CODE_OAUTH_TOKEN=<your token>
 Edit `~/.benji/config.md` (created on first run) or edit `benji/config.py` directly:
 
 ```python
-OLLAMA_MODEL = "gemma3"              # or "gemma3:27b"
+OLLAMA_MODEL = "gemma4:e4b"          # default; swap tag if you have more RAM
 IMESSAGE_TRIGGER_HANDLE = "+15145550123"  # your phone number
 ```
 
